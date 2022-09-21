@@ -4,7 +4,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Open Sans', sans-serif; 
-  background-image: url(./public/images/concrete-wall.jpg);
+  background-image: url(/images/concrete-wall.jpg);
   box-sizing: border-box;
   height: fit-content;
 }
@@ -52,10 +52,14 @@ h1 {
 
 .todo-column {
   width: 50%;
+  border-top: solid black 2px;
+  border-right: solid black 2px;
 }
 
 .done-column {
   width: 50%;
+  border-top: solid black 2px;
+  border-right: solid black 2px;
 }
 
 

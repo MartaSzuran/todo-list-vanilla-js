@@ -8,15 +8,15 @@ document.querySelector("#app").innerHTML = `
       <button type='submit'>Add new task</button>
     </form>
     <div class='all-tasks' id='all-tasks'>
-      <div class='toDo' id='to-do'></div>
-      <div class='done' id='done'></div>
+      <div class='todo-column' id='to-do'></div>
+      <div class='done-column' id='done'></div>
     </div>
   </div>
 `;
 
-window.addEventListener("toDo", () => {
-  const chosenElement = document.getElementById();
-});
+const doneColumn = document.getElementById("done");
+doneColumn.addEventListener("dragover", onDragOver);
+doneColumn.addEventListener("drop", onDrop);
 
 document.getElementById("user-input").addEventListener("submit", (event) => {
   event.preventDefault();
@@ -32,24 +32,26 @@ function render() {
   clearTodos();
   if (tasks.length > 0) {
     tasks.map((task, index) => {
-      checkIfTasksIsDone(task, index);
+      checkIfTasksAreDone(task, index);
     });
   }
 }
 
-function checkIfTasksIsDone(task, index) {
+function checkIfTasksAreDone(task, index) {
   if (!task.isDone) {
     let toDoDiv = document.createElement("div");
-    toDoDiv.setAttribute("draggable", true);
     toDoDiv.innerHTML = `
-    <div id='task'>${index + 1}. ${task.text}</div>
+    <div id='${task.id}' draggable='true'>${task.text}</div>
     `;
+    toDoDiv.addEventListener("dragstart", onDragStart);
     let toDoList = document.getElementById("to-do");
     toDoList.appendChild(toDoDiv);
     return;
   }
   let doneDiv = document.createElement("div");
-  doneDiv.innerText = task.text;
+  doneDiv.innerText = `
+    <div id='${task.id}' draggable='true'>${task.text}</div>
+    `;
   let doneList = document.getElementById("to-do");
   doneList.appendChild(doneDiv);
 }
@@ -59,4 +61,17 @@ function clearTodos() {
   while (toDoDiv.firstChild) {
     toDoDiv.removeChild(toDoDiv.lastChild);
   }
+}
+
+function onDragStart(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function onDragOver(ev) {
+  ev.preventDefault();
+}
+
+function onDrop(ev) {
+  const data = ev.dataTransfer.getData("text");
+  ev.target.appendChild(document.getElementById(data));
 }
