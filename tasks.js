@@ -4,7 +4,7 @@ let id = 0;
 
 export function createNewTask(value) {
   let task = {
-    id: id + 1,
+    id: ++id,
     text: value,
     isDone: false,
   };
