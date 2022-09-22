@@ -74,5 +74,17 @@ h1 {
   padding-bottom: 3px;
 }
 
+.info {
+  padding: 25px;
+    font-size: 30px;
+    font-weight: 600;
+    color: brown;
+    text-align: center;
+}
 
-
+.delete {
+  text-align: right;
+  width: 86%;
+  color: brown;
+  font-size: 94px;
+}

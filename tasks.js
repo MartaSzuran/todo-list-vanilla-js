@@ -22,14 +22,15 @@ function setNewTaskInLocalStorage(task) {
 }
 
 function checkIfTaskAlreadyExists(task) {
-  const currentTasks = Array.from(
-    JSON.parse(localStorage.getItem("currentTasks"))
-  );
-  currentTasks.map((t) => {
-    if (t.text === task.text) {
-      ifTaskAlreadyExists = true;
-    }
-  });
+  let tasks = JSON.parse(localStorage.getItem("currentTasks"));
+  if (tasks) {
+    const currentTasks = Array.from(tasks);
+    currentTasks.map((t) => {
+      if (t.text === task.text) {
+        ifTaskAlreadyExists = true;
+      }
+    });
+  }
 }
 
 export function updateTasksInLocalStorage(tasks) {

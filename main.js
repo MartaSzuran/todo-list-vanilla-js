@@ -20,6 +20,7 @@ document.querySelector("#app").innerHTML = `
       <div class='done-column' id='done'></div>
     </div>
     <div class='info' id='info'></div>
+    <div class='delete' id='delete'>✘</div>
   </div>
 `;
 
@@ -57,7 +58,7 @@ function addInfoDiv() {
   if (ifTaskAlreadyExists) {
     const information = document.getElementById("info");
     information.innerHTML = "This task is already on the list";
-    setTimeout(() => (information.innerHTML = ""), 2000);
+    setTimeout(() => (information.innerHTML = ""), 3000);
   }
 }
 
@@ -109,6 +110,13 @@ function onDrop(ev) {
   const id = Number(ev.dataTransfer.getData("taskId"));
   const found = tasks.find((_, index) => index === id);
   if (found) {
+    if (ev.target.id === "delete") {
+      tasks = tasks.filter((task) => task !== found);
+      updateTasksInLocalStorage(tasks);
+      tasksFromLocalStorage = JSON.parse(localStorage.getItem("currentTasks"));
+      render();
+      return;
+    }
     if (found.isDone) {
       found.isDone = false;
       updateTasksInLocalStorage(tasks);
@@ -121,9 +129,14 @@ function onDrop(ev) {
   }
 }
 
+function onDelete() {}
+
 const doneColumn = document.getElementById("done");
 doneColumn.addEventListener("dragover", onDragOver);
 doneColumn.addEventListener("drop", onDrop);
 const todoColumn = document.getElementById("todo");
 todoColumn.addEventListener("dragover", onDragOver);
 todoColumn.addEventListener("drop", onDrop);
+const deleteDiv = document.getElementById("delete");
+deleteDiv.addEventListener("dragover", onDragOver);
+deleteDiv.addEventListener("drop", onDrop);
