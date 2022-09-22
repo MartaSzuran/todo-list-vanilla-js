@@ -1,6 +1,7 @@
 # Todo List
 
 ![todo-list screenshot](./todoList.png)
+[Live](https://todolist-vanilla-js-marta-szuran.netlify.app)
 
 ## Technologies
 
