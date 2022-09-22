@@ -7,12 +7,8 @@ document.querySelector("#app").innerHTML = `
       <input type='text' id='todo-input'></input>
       <button type='submit'>Add new task</button>
     </form>
-    <div class='all-tasks'>
-      <div class='todo-column'>TODO</div>
-      <div class='done-column'>DONE</div>
-    </div>
     <div class='all-tasks' id='all-tasks'>
-      <div class='todo-column' id='to-do'></div>
+      <div class='todo-column' id='todo'></div>
       <div class='done-column' id='done'></div>
     </div>
   </div>
@@ -21,6 +17,9 @@ document.querySelector("#app").innerHTML = `
 const doneColumn = document.getElementById("done");
 doneColumn.addEventListener("dragover", onDragOver);
 doneColumn.addEventListener("drop", onDrop);
+const todoColumn = document.getElementById("todo");
+todoColumn.addEventListener("dragover", onDragOver);
+todoColumn.addEventListener("drop", onDrop);
 
 document.getElementById("user-input").addEventListener("submit", (event) => {
   event.preventDefault();
@@ -43,14 +42,17 @@ function render() {
   }
 }
 
-function assignTaskToDiv(task, index) {
+function assignTaskToDiv(task) {
   if (!task.isDone) {
-    const div = addTaskToDiv(task, "to-do");
+    const div = addTaskToDiv(task, "todo");
     div.addEventListener("dragstart", (ev) => {
       ev.dataTransfer.setData("taskId", task.id);
-    })
+    });
   } else {
-    addTaskToDiv(task, "done");
+    const div = addTaskToDiv(task, "done");
+    div.addEventListener("dragstart", (ev) => {
+      ev.dataTransfer.setData("taskId", task.id);
+    });
   }
 }
 
@@ -59,17 +61,17 @@ function addTaskToDiv(task, divId) {
   taskDiv.id = `task${task.id}`;
   taskDiv.draggable = true;
   taskDiv.innerText = `${task.text}`;
-  let doneList = document.getElementById(divId);
-  doneList.appendChild(taskDiv);
-  return taskDiv
+  let taskList = document.getElementById(divId);
+  taskList.appendChild(taskDiv);
+  return taskDiv;
 }
 
 function clearTodos() {
-  removeAllChildrenFrom("to-do")
+  removeAllChildrenFrom("todo");
 }
 
 function clearDone() {
-  removeAllChildrenFrom("done")
+  removeAllChildrenFrom("done");
 }
 
 function removeAllChildrenFrom(id) {
@@ -85,8 +87,13 @@ function onDragOver(ev) {
 
 function onDrop(ev) {
   const id = Number(ev.dataTransfer.getData("taskId"));
-  const found = tasks.find(t => t.id === id);
+  const found = tasks.find((task) => task.id === id);
   if (found) {
+    if (found.isDone) {
+      found.isDone = false;
+      render();
+      return;
+    }
     found.isDone = true;
     render();
   }
