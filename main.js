@@ -7,6 +7,10 @@ document.querySelector("#app").innerHTML = `
       <input type='text' id='todo-input'></input>
       <button type='submit'>Add new task</button>
     </form>
+    <div class='all-tasks'>
+      <div class='todo-column'>TODO</div>
+      <div class='done-column'>DONE</div>
+    </div>
     <div class='all-tasks' id='all-tasks'>
       <div class='todo-column' id='to-do'></div>
       <div class='done-column' id='done'></div>
@@ -25,46 +29,54 @@ document.getElementById("user-input").addEventListener("submit", (event) => {
     createNewTask(userInput.value);
     render();
     userInput.value = "";
+    document.getElementById("todo-input").focus();
   }
 });
 
 function render() {
   clearTodos();
+  clearDone();
   if (tasks.length > 0) {
     tasks.map((task, index) => {
-      checkIfTasksAreDone(task, index);
+      assignTaskToDiv(task, index);
     });
   }
 }
 
-function checkIfTasksAreDone(task, index) {
+function assignTaskToDiv(task, index) {
   if (!task.isDone) {
-    let toDoDiv = document.createElement("div");
-    toDoDiv.innerHTML = `
-    <div id='${task.id}' draggable='true'>${task.text}</div>
-    `;
-    toDoDiv.addEventListener("dragstart", onDragStart);
-    let toDoList = document.getElementById("to-do");
-    toDoList.appendChild(toDoDiv);
-    return;
+    const div = addTaskToDiv(task, "to-do");
+    div.addEventListener("dragstart", (ev) => {
+      ev.dataTransfer.setData("taskId", task.id);
+    })
+  } else {
+    addTaskToDiv(task, "done");
   }
-  let doneDiv = document.createElement("div");
-  doneDiv.innerText = `
-    <div id='${task.id}' draggable='true'>${task.text}</div>
-    `;
-  let doneList = document.getElementById("to-do");
-  doneList.appendChild(doneDiv);
+}
+
+function addTaskToDiv(task, divId) {
+  let taskDiv = document.createElement("div");
+  taskDiv.id = `task${task.id}`;
+  taskDiv.draggable = true;
+  taskDiv.innerText = `${task.text}`;
+  let doneList = document.getElementById(divId);
+  doneList.appendChild(taskDiv);
+  return taskDiv
 }
 
 function clearTodos() {
-  let toDoDiv = document.getElementById("to-do");
+  removeAllChildrenFrom("to-do")
+}
+
+function clearDone() {
+  removeAllChildrenFrom("done")
+}
+
+function removeAllChildrenFrom(id) {
+  let toDoDiv = document.getElementById(id);
   while (toDoDiv.firstChild) {
     toDoDiv.removeChild(toDoDiv.lastChild);
   }
-}
-
-function onDragStart(ev) {
-  ev.dataTransfer.setData("text", ev.target.id);
 }
 
 function onDragOver(ev) {
@@ -72,6 +84,10 @@ function onDragOver(ev) {
 }
 
 function onDrop(ev) {
-  const data = ev.dataTransfer.getData("text");
-  ev.target.appendChild(document.getElementById(data));
+  const id = Number(ev.dataTransfer.getData("taskId"));
+  const found = tasks.find(t => t.id === id);
+  if (found) {
+    found.isDone = true;
+    render();
+  }
 }
