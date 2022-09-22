@@ -20,7 +20,7 @@ document.querySelector("#app").innerHTML = `
       <div class='done-column' id='done'></div>
     </div>
     <div class='info' id='info'></div>
-    <div class='delete' id='delete'>✘</div>
+    <img src='/images/bin.png' class='delete' id='delete' alt='trash-bin'/>
   </div>
 `;
 
@@ -128,8 +128,6 @@ function onDrop(ev) {
     render();
   }
 }
-
-function onDelete() {}
 
 const doneColumn = document.getElementById("done");
 doneColumn.addEventListener("dragover", onDragOver);

@@ -7,6 +7,7 @@ body {
   background-image: url(/images/concrete-wall.jpg);
   box-sizing: border-box;
   height: fit-content;
+  letter-spacing: 1px;
 }
 
 .tasks-form {
@@ -25,13 +26,24 @@ input {
   width: 60%;
   height: 50px;
   font-size: 30px;
+  background-color: rgb(153, 160, 158);
+  border: solid black 1px;
+}
+
+input:hover {
+  background-color: rgb(176, 177, 176);
 }
 
 button {
   width: 30%;
   height: fit-content;
-  padding: 9px;
+  padding: 8px;
   font-size: 30px;
+  background-color: rgb(153, 160, 158);
+}
+
+button:hover {
+  background-color: rgb(176, 177, 176);
 }
 
 .headers {
@@ -56,35 +68,33 @@ h1 {
   justify-content: center;
 }
 
-.todo-column {
+.done-column, .todo-column {
   width: 50%;
-  border-top: solid black 2px;
-  border-right: solid black 2px;
-  padding: 5px 0px 10px 20px; 
-}
-
-.done-column {
-  width: 50%;
-  border-top: solid black 2px;
-  border-right: solid black 2px;
+  border-top: solid black 5px;
+  border-right: solid black 5px;
   padding: 5px 0px 10px 20px;
 }
 
 .task {
+  margin-right: 40px;
+  margin-bottom: 11px;
   padding-bottom: 3px;
+  padding-left: 10px;
+  border-style: none none solid none;
+  border-width: 1px;
+  width: fit-content;
 }
 
 .info {
   padding: 25px;
-    font-size: 30px;
-    font-weight: 600;
-    color: brown;
-    text-align: center;
+  font-size: 30px;
+  font-weight: 600;
+  color: brown;
+  text-align: center;
 }
 
 .delete {
-  text-align: right;
-  width: 86%;
-  color: brown;
-  font-size: 94px;
+  margin: 0px 150px 0px 0px;
+  width: 100px;
+  float: right;
 }
