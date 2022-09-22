@@ -11,6 +11,10 @@ document.querySelector("#app").innerHTML = `
       <input type='text' id='todo-input'></input>
       <button type='submit'>Add new task</button>
     </form>
+    <div class='headers'>
+      <h1>TODO</h1>
+      <h1>DONE</h1>
+    </div>
     <div class='all-tasks' id='all-tasks'>
       <div class='todo-column' id='todo'></div>
       <div class='done-column' id='done'></div>
@@ -42,7 +46,6 @@ function render() {
   if (tasksFromLocalStorage !== null) {
     tasks = Array.from(tasksFromLocalStorage);
   }
-  console.log(tasks);
   clearTodos();
   clearDone();
   tasks.map((task, index) => {
@@ -60,21 +63,22 @@ function addInfoDiv() {
 
 function assignTaskToDiv(task, index) {
   if (!task.isDone) {
-    const div = addTaskToDiv(task, "todo");
+    const div = addTaskToDiv(task, "todo", index);
     div.addEventListener("dragstart", (ev) => {
       ev.dataTransfer.setData("taskId", index);
     });
   } else {
-    const div = addTaskToDiv(task, "done");
+    const div = addTaskToDiv(task, "done", index);
     div.addEventListener("dragstart", (ev) => {
       ev.dataTransfer.setData("taskId", index);
     });
   }
 }
 
-function addTaskToDiv(task, divId) {
+function addTaskToDiv(task, divId, index) {
   let taskDiv = document.createElement("div");
-  taskDiv.id = `task${task.id}`;
+  taskDiv.id = `task${index}`;
+  taskDiv.classList = "task";
   taskDiv.draggable = true;
   taskDiv.innerText = `${task.text}`;
   let taskList = document.getElementById(divId);
