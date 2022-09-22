@@ -1,5 +1,9 @@
 import "./style.css";
-import { createNewTask, tasks } from "./tasks.js";
+import {
+  createNewTask,
+  updateTasksInLocalStorage,
+  ifTaskAlreadyExists,
+} from "./tasks.js";
 
 document.querySelector("#app").innerHTML = `
   <div>
@@ -11,21 +15,23 @@ document.querySelector("#app").innerHTML = `
       <div class='todo-column' id='todo'></div>
       <div class='done-column' id='done'></div>
     </div>
+    <div class='info' id='info'></div>
   </div>
 `;
 
-const doneColumn = document.getElementById("done");
-doneColumn.addEventListener("dragover", onDragOver);
-doneColumn.addEventListener("drop", onDrop);
-const todoColumn = document.getElementById("todo");
-todoColumn.addEventListener("dragover", onDragOver);
-todoColumn.addEventListener("drop", onDrop);
+let tasksFromLocalStorage = JSON.parse(localStorage.getItem("currentTasks"));
+let tasks = null;
+if (tasksFromLocalStorage) {
+  render();
+}
 
 document.getElementById("user-input").addEventListener("submit", (event) => {
   event.preventDefault();
   let userInput = document.getElementById("todo-input");
   if (userInput.value) {
     createNewTask(userInput.value);
+    addInfoDiv();
+    tasksFromLocalStorage = JSON.parse(localStorage.getItem("currentTasks"));
     render();
     userInput.value = "";
     document.getElementById("todo-input").focus();
@@ -33,25 +39,35 @@ document.getElementById("user-input").addEventListener("submit", (event) => {
 });
 
 function render() {
+  if (tasksFromLocalStorage !== null) {
+    tasks = Array.from(tasksFromLocalStorage);
+  }
+  console.log(tasks);
   clearTodos();
   clearDone();
-  if (tasks.length > 0) {
-    tasks.map((task, index) => {
-      assignTaskToDiv(task, index);
-    });
+  tasks.map((task, index) => {
+    assignTaskToDiv(task, index);
+  });
+}
+
+function addInfoDiv() {
+  if (ifTaskAlreadyExists) {
+    const information = document.getElementById("info");
+    information.innerHTML = "This task is already on the list";
+    setTimeout(() => (information.innerHTML = ""), 2000);
   }
 }
 
-function assignTaskToDiv(task) {
+function assignTaskToDiv(task, index) {
   if (!task.isDone) {
     const div = addTaskToDiv(task, "todo");
     div.addEventListener("dragstart", (ev) => {
-      ev.dataTransfer.setData("taskId", task.id);
+      ev.dataTransfer.setData("taskId", index);
     });
   } else {
     const div = addTaskToDiv(task, "done");
     div.addEventListener("dragstart", (ev) => {
-      ev.dataTransfer.setData("taskId", task.id);
+      ev.dataTransfer.setData("taskId", index);
     });
   }
 }
@@ -87,14 +103,23 @@ function onDragOver(ev) {
 
 function onDrop(ev) {
   const id = Number(ev.dataTransfer.getData("taskId"));
-  const found = tasks.find((task) => task.id === id);
+  const found = tasks.find((_, index) => index === id);
   if (found) {
     if (found.isDone) {
       found.isDone = false;
+      updateTasksInLocalStorage(tasks);
       render();
       return;
     }
     found.isDone = true;
+    updateTasksInLocalStorage(tasks);
     render();
   }
 }
+
+const doneColumn = document.getElementById("done");
+doneColumn.addEventListener("dragover", onDragOver);
+doneColumn.addEventListener("drop", onDrop);
+const todoColumn = document.getElementById("todo");
+todoColumn.addEventListener("dragover", onDragOver);
+todoColumn.addEventListener("drop", onDrop);
